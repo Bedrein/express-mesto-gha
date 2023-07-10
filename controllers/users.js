@@ -21,17 +21,14 @@ const getUsers = (_req, res) => User.find({})
   .then((users) => res.status(200).send({ users }))
   .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
 
-const getUser = (req, res) => {
-  const { id } = req.params;
-  return User.findById(id)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
-      }
-      return res.status(200).send(user);
-    })
-    .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
-};
+const getUser = (req, res) => User.findById(req.params.userId)
+  .then((user) => {
+    if (!user) {
+      return res.status(404).send({ message: 'Пользователь не найден' });
+    }
+    return res.status(200).send(user);
+  })
+  .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
 
 const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
