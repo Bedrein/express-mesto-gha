@@ -1,9 +1,7 @@
 const Card = require('../models/card');
 
 const createCard = (req, res) => {
-  const {
-    name, link, owner, likes, createdAt,
-  } = req.body;
+  const { name, link, owner, likes, createdAt } = req.body;
   Card.create({
     name,
     link,

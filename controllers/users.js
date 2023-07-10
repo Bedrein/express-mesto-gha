@@ -29,7 +29,7 @@ const getUser = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
       }
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
     .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
 };
