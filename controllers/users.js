@@ -39,7 +39,7 @@ const getUser = (req, res) => User.findById(req.params.userId)
 const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
-    req.params.userId,
+    req.params._id,
     { name, about },
     { new: true, runValidators: true },
   )
@@ -61,12 +61,12 @@ const updateProfileInfo = (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
-    req.params.userId,
+    req.params._id,
     { avatar },
     { new: true, runValidators: true },
   )
-    .then((user) => {
-      res.send(user);
+    .then((data) => {
+      res.send(data);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

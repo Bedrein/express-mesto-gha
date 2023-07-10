@@ -2,17 +2,16 @@ const Card = require('../models/card');
 
 const createCard = (req, res) => {
   const {
-    name, link, owner, likes, createdAt,
+    name, link,
   } = req.body;
-  Card.create({
+  const owner = req.user._id;
+  return Card.create({
     name,
     link,
     owner,
-    likes,
-    createdAt,
   })
     .then((card) => {
-      res.status(200).send(card);
+      res.status(201).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -48,10 +47,9 @@ const deleteCard = (req, res) => {
 };
 
 const likeCard = (req, res) => {
-  const { _id } = req.user;
   Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: _id } },
+    req.params._id,
+    { $addToSet: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => {
@@ -60,6 +58,8 @@ const likeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Данные преданны неверно' });
+      } else if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Идентификатор некорректен' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
@@ -78,6 +78,8 @@ const dislikeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Данные переданны неверно' });
+      } else if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Идентификатор некорректен' });
       } else {
         res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
