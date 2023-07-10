@@ -28,7 +28,13 @@ const getUser = (req, res) => User.findById(req.params.userId)
     }
     return res.status(200).send(user);
   })
-  .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'Переданные данные некорректы' });
+    } else {
+      res.status(500).send({ message: 'Ошибка по-умолчанию' });
+    }
+  });
 
 const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
