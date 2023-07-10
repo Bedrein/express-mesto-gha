@@ -66,7 +66,7 @@ const updateAvatar = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Данные введены некоректно' });
       } else {
-        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+        res.status(500).send({ message: 'Ошибка по умолчанию' });
       }
     });
 };
