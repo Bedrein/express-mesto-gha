@@ -47,7 +47,7 @@ const updateProfileInfo = (req, res) => {
       if (!user) {
         res.status(404).send({ massage: 'Пользователь не найден' });
       }
-      return res.status(200).send(user);
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
