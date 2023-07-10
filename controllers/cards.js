@@ -1,8 +1,9 @@
-
-const Card = require("../models/card");
+const Card = require('../models/card');
 
 const createCard = (req, res) => {
-  const { name, link, owner, likes, createdAt } = req.body;
+  const {
+    name, link, owner, likes, createdAt,
+  } = req.body;
   Card.create({
     name,
     link,
@@ -14,12 +15,12 @@ const createCard = (req, res) => {
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(400).send({
-          message: "Ошибка, некорректные данные при создании карточки",
+          message: 'Ошибка, некорректные данные при создании карточки',
         });
       } else {
-        res.status(500).send({ message: "Ошибка по-умолчанию" });
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };
@@ -29,7 +30,7 @@ const getCards = (_req, res) => {
     .then((cards) => {
       res.status(200).send({ cards });
     })
-    .catch((_err) => res.status(500).send({ message: "Ошибка по-умолчанию" }));
+    .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
 };
 
 const deleteCard = (req, res) => {
@@ -37,12 +38,12 @@ const deleteCard = (req, res) => {
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!cardId) {
-        res.status(404).send({ massage: "Карточка не найдена" });
+        res.status(404).send({ massage: 'Карточка не найдена' });
       }
       res.status(200).send(card);
     })
-    .catch((_err) => {
-      res.status(500).send({ message: "Ошибка по-умолчанию" });
+    .catch(() => {
+      res.status(500).send({ message: 'Ошибка по-умолчанию' });
     });
 };
 
@@ -57,10 +58,10 @@ const likeCard = (req, res) => {
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({ message: "Данные преданны неверно" });
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные преданны неверно' });
       } else {
-        res.status(500).send({ message: "Ошибка по-умолчанию" });
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };
@@ -75,10 +76,10 @@ const dislikeCard = (req, res) => {
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({ message: "Данные переданны неверно" });
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные переданны неверно' });
       } else {
-        res.status(500).send({ message: "Ошибка по-умолчанию" });
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };

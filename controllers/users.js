@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -7,33 +7,31 @@ const createUser = (req, res) => {
       res.status(201).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(400).send({
-          message: "Ошибка валидации при создании пользователя",
+          message: 'Ошибка валидации при создании пользователя',
         });
       } else {
-        res.status(500).send({ message: "Ошибка" });
-        return;
+        res.status(500).send({ message: 'Ошибка' });
       }
     });
 };
 
-const getUsers = (_req, res) => {
-  return User.find({})
+const getUsers = (_req, res) =>
+  User.find({})
     .then((users) => res.status(200).send({ users }))
-    .catch(() => res.status(500).send({ message: "Ошибка по-умолчанию" }));
-};
+    .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
 
 const getUser = (req, res) => {
   const { id } = req.params;
   return User.findById(id)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "Пользователь не найден" });
+        return res.status(404).send({ message: 'Пользователь не найден' });
       }
       res.status(200).send(user);
     })
-    .catch(() => res.status(500).send({ message: "Ошибка по-умолчанию" }));
+    .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
 };
 
 const updateProfileInfo = (req, res) => {
@@ -45,15 +43,15 @@ const updateProfileInfo = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        res.status(404).send({ massage: "Пользователь не найден" });
+        res.status(404).send({ massage: 'Пользователь не найден' });
       }
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({ message: "Данные введены некоректно" });
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные введены некоректно' });
       } else {
-        res.status(500).send({ message: "Ошибка по-умолчанию" });
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };
@@ -69,10 +67,10 @@ const updateAvatar = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      if (eerror.name === "ValidationError") {
-        res.status(400).send({ message: "Данные введены некоректно" });
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Данные введены некоректно' });
       } else {
-        res.status(500).send({ message: "Ошибка по-умолчанию" });
+        res.status(500).send({ message: 'Ошибка по-умолчанию' });
       }
     });
 };
