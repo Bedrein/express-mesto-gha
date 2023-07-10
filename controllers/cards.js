@@ -1,7 +1,9 @@
 const Card = require('../models/card');
 
 const createCard = (req, res) => {
-  const { name, link, owner, likes, createdAt } = req.body;
+  const {
+    name, link, owner, likes, createdAt,
+  } = req.body;
   Card.create({
     name,
     link,
@@ -50,7 +52,7 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: _id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       res.status(200).send(card);
@@ -68,7 +70,7 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: _id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       res.status(200).send(card);

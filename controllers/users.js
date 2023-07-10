@@ -17,10 +17,9 @@ const createUser = (req, res) => {
     });
 };
 
-const getUsers = (_req, res) =>
-  User.find({})
-    .then((users) => res.status(200).send({ users }))
-    .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
+const getUsers = (_req, res) => User.find({})
+  .then((users) => res.status(200).send({ users }))
+  .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
 
 const getUser = (req, res) => {
   const { id } = req.params;
@@ -39,7 +38,7 @@ const updateProfileInfo = (req, res) => {
   User.findByIdAndUpdate(
     req.params.userId,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (!user) {
@@ -61,7 +60,7 @@ const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.params.userId,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
       res.send(user);
