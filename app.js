@@ -12,9 +12,6 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use('/', userRoutes);
-app.use('/', cardRoutes);
-
 app.use((req, res, next) => {
   req.user = {
     _id: '64ab2282ef6cc45248091b02',
@@ -22,6 +19,9 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use('/', userRoutes);
+app.use('/', cardRoutes);
 
 app.use('/*', (req, res) => {
   res.status(404).send({ message: 'Страница отсутствует' });

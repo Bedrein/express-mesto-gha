@@ -68,7 +68,7 @@ const likeCard = (req, res) => {
 const dislikeCard = (req, res) => {
   const { _id } = req.user;
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    _id,
     { $pull: { likes: _id } },
     { new: true },
   )

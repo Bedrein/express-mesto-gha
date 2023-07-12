@@ -38,8 +38,10 @@ const getUser = (req, res) => User.findById(req.params.userId)
 
 const updateProfileInfo = (req, res) => {
   const { name, about } = req.body;
+  const { _id } = req.user;
+
   User.findByIdAndUpdate(
-    req.params._id,
+    _id,
     { name, about },
     { new: true, runValidators: true },
   )
@@ -60,8 +62,9 @@ const updateProfileInfo = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
+  const { _id } = req.user;
   User.findByIdAndUpdate(
-    req.params._id,
+    _id,
     { avatar },
     { new: true, runValidators: true },
   )
