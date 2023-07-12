@@ -6,10 +6,6 @@ const createCard = (req, res) => {
   } = req.body;
 
   const owner = req.user._id;
-  console.log(name);
-  console.log(link);
-  console.log(owner);
-
   Card.create({
     name,
     link,
@@ -60,16 +56,17 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
+      if (!card) {
+        res.status(404).send({ massage: 'Карточка не найдена' });
+      }
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные преданны неверно' });
-      } else if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Идентификатор некорректен' });
-      } else {
-        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка, некорректные данные при создании карточки' });
+        return;
       }
+      res.status(500).send({ message: 'Ошибка по-умолчанию' });
     });
 };
 const dislikeCard = (req, res) => {
@@ -79,16 +76,17 @@ const dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
+      if (!card) {
+        res.status(404).send({ massage: 'Карточка не найдена' });
+      }
       res.status(200).send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные переданны неверно' });
-      } else if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Идентификатор некорректен' });
-      } else {
-        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка, некорректные данные при создании карточки' });
+        return;
       }
+      res.status(500).send({ message: 'Ошибка по-умолчанию' });
     });
 };
 
