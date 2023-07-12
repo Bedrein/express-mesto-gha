@@ -5,17 +5,20 @@ const createCard = (req, res) => {
     name, link,
   } = req.body;
   const owner = req.user._id;
+
   return Card.create({
     name,
     link,
     owner,
   })
+
     .then((card) => {
       res.status(201).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({
+
           message: 'Ошибка, некорректные данные при создании карточки',
         });
       } else {
