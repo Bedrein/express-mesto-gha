@@ -4,12 +4,13 @@ const createCard = (req, res) => {
   const {
     name, link,
   } = req.body;
+
   const owner = req.user._id;
   console.log(name);
   console.log(link);
   console.log(owner);
 
-  return Card.create({
+  Card.create({
     name,
     link,
     owner,
@@ -39,10 +40,10 @@ const getCards = (_req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  const { cardId } = req.params.cardId;
-  Card.findByIdAndRemove(cardId)
+  const { cardId } = req.params;
+  Card.findByIdAndDelete(cardId)
     .then((card) => {
-      if (!cardId) {
+      if (!card) {
         res.status(404).send({ massage: 'Карточка не найдена' });
       }
       res.status(200).send(card);
