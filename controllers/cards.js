@@ -44,7 +44,11 @@ const deleteCard = (req, res) => {
       }
       res.status(200).send(card);
     })
-    .catch(() => {
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка, некорректные данные при создании карточки' });
+        return;
+      }
       res.status(500).send({ message: 'Ошибка по-умолчанию' });
     });
 };
