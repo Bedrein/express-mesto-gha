@@ -1,39 +1,45 @@
 const User = require('../models/user');
+const {
+  ERROR_CODE,
+  MESSAGE_ERROR_CODE,
+  ERROR_NOT_FOUND,
+  MESSAGE_ERROR_NOT_FOUND,
+  ERROR_DEFAULT,
+  MESSAGE_ERROR_DEFAULT,
+} = require('../utils/error');
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
 
     .then((user) => {
-      res.status(201).send(user);
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({
-          message: 'Ошибка валидации при создании пользователя',
-        });
+        res.status(ERROR_CODE).send(MESSAGE_ERROR_CODE);
       } else {
-        res.status(500).send({ message: 'Ошибка' });
+        res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
       }
     });
 };
 
 const getUsers = (_req, res) => User.find({})
-  .then((users) => res.status(200).send({ users }))
-  .catch(() => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
+  .then((users) => res.send({ users }))
+  .catch(() => res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT));
 
 const getUser = (req, res) => User.findById(req.params.userId)
   .then((user) => {
     if (!user) {
-      return res.status(404).send({ message: 'Пользователь не найден' });
+      return res.status(ERROR_NOT_FOUND).send(MESSAGE_ERROR_NOT_FOUND);
     }
-    return res.status(200).send(user);
+    return res.send(user);
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: 'Переданные данные некорректы' });
+      res.status(ERROR_CODE).send(MESSAGE_ERROR_CODE);
     } else {
-      res.status(500).send({ message: 'Ошибка по-умолчанию' });
+      res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
     }
   });
 
@@ -48,15 +54,16 @@ const updateProfileInfo = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        res.status(404).send({ massage: 'Пользователь не найден' });
+        res.status(ERROR_NOT_FOUND).send(MESSAGE_ERROR_NOT_FOUND);
+      } else {
+        res.send(user);
       }
-      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные введены некоректно' });
+        res.status(ERROR_CODE).send(MESSAGE_ERROR_CODE);
       } else {
-        res.status(500).send({ message: 'Ошибка по-умолчанию' });
+        res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
       }
     });
 };
@@ -74,9 +81,9 @@ const updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Данные введены некоректно' });
+        res.status(ERROR_CODE).send(MESSAGE_ERROR_CODE);
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию' });
+        res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
       }
     });
 };
