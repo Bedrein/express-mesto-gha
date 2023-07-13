@@ -62,8 +62,9 @@ const likeCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(404).send({ massage: 'Карточка не найдена' });
+      } else {
+        res.status(200).send(card);
       }
-      res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -82,8 +83,9 @@ const dislikeCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(404).send({ massage: 'Карточка не найдена' });
+      } else {
+        res.status(200).send(card);
       }
-      res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
