@@ -1,49 +1,72 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const {
-  ERROR_CODE,
-  MESSAGE_ERROR_CODE,
-  ERROR_NOT_FOUND,
-  MESSAGE_ERROR_NOT_FOUND,
-  ERROR_DEFAULT,
-  MESSAGE_ERROR_DEFAULT,
-} = require('../utils/error');
+const NotFoundError = require('../utils/errors/NotFoundError');
+const AuthError = require('../utils/errors/authError');
+const BadRequestError = require('../utils/errors/badRequestError');
+const NouniqueError = require('../utils/errors/NouniqueError');
+const { JWT_SECRET } = require('../utils/constants');
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+const createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(String(password), 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
 
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send(MESSAGE_ERROR_CODE);
-      } else {
-        res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
+        next(new BadRequestError('Переданы некорректные данные'));
+        return;
       }
+      if (err.code === 11000) {
+        next(new NouniqueError('При регистрации указан email, который уже существует'));
+        return;
+      }
+      next(err);
     });
 };
 
-const getUsers = (_req, res) => User.find({})
-  .then((users) => res.send({ users }))
-  .catch(() => res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT));
+const getUsers = (_req, res, next) => {
+  User.find({})
+    .then((users) => res.send({ users }))
+    .catch(next);
+};
 
-const getUser = (req, res) => User.findById(req.params.userId)
+const getUser = (req, res, next) => User.findById(req.params.userId)
   .then((user) => {
     if (!user) {
-      return res.status(ERROR_NOT_FOUND).send(MESSAGE_ERROR_NOT_FOUND);
+      next(new NotFoundError('Пользователь не найден'));
+      return;
     }
-    return res.send(user);
+    next(res.send(user));
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      res.status(ERROR_CODE).send(MESSAGE_ERROR_CODE);
-    } else {
-      res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
+      next(new BadRequestError('Переданы некорректные данные'));
+      return;
     }
+    next(err);
   });
 
-const updateProfileInfo = (req, res) => {
+const getUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        next(new NotFoundError('Пользователь не найден'));
+        return;
+      }
+      res.send(user);
+    })
+    .catch((err) => next(err));
+};
+
+function updateProfileInfo(req, res, next) {
   const { name, about } = req.body;
   const { _id } = req.user;
 
@@ -54,21 +77,21 @@ const updateProfileInfo = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        res.status(ERROR_NOT_FOUND).send(MESSAGE_ERROR_NOT_FOUND);
-      } else {
-        res.send(user);
+        next(new NotFoundError('Пользователь не найден'));
+        return;
       }
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send(MESSAGE_ERROR_CODE);
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
-        res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
+        next(err);
       }
     });
-};
+}
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const { _id } = req.user;
   User.findByIdAndUpdate(
@@ -81,11 +104,37 @@ const updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send(MESSAGE_ERROR_CODE);
-      } else {
-        res.status(ERROR_DEFAULT).send(MESSAGE_ERROR_DEFAULT);
+        next(new BadRequestError('Переданы некорректные данные'));
+        return;
       }
+      next(err);
     });
+};
+
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        next(new AuthError('Неправильные почта или пароль'));
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            next(new AuthError('Неправильные почта или пароль'));
+          }
+
+          const token = jwt.sign(
+            { _id: user._id },
+            JWT_SECRET,
+            { expiresIn: '7d' },
+          );
+          res.send({ token });
+        });
+    })
+    .catch(next);
 };
 
 module.exports = {
@@ -94,4 +143,6 @@ module.exports = {
   getUser,
   updateAvatar,
   updateProfileInfo,
+  login,
+  getUserInfo,
 };
