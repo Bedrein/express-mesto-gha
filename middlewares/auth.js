@@ -52,7 +52,7 @@ const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    next(new AuthError('Необходимоj авторизоваться'));
+    next(new AuthError('Необходимо авторизоваться'));
     return;
   }
 
