@@ -21,5 +21,6 @@ app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`Add listening on port ${PORT}`);
 });

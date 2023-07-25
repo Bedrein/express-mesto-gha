@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { validateUserAuth, validateUserCreate } = require('../utils/validate');
 const {
   createUser,
   login,
@@ -8,8 +9,8 @@ const userRoutes = require('./users');
 const cardRoutes = require('./cards');
 const NotFoundError = require('../utils/errors/NotFoundError');
 
-router.post('/signup', createUser);
-router.post('/signin', login);
+router.post('/signup', validateUserCreate, createUser);
+router.post('/signin', validateUserAuth, login);
 
 router.use(auth);
 
