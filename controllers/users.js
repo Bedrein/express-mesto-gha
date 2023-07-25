@@ -16,7 +16,7 @@ const createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }))
 
-    .then((user) => res.send({
+    .then((user) => res.status(201).send({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
@@ -120,13 +120,13 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        next(new AuthError('Неправильные почта или пароль'));
+        throw new AuthError('Неправильные почта или пароль');
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            next(new AuthError('Неправильные почта или пароль'));
+            throw new AuthError('Неправильные почта или пароль');
           }
 
           const token = jwt.sign(
